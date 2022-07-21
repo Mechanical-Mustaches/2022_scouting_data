@@ -17,6 +17,18 @@ School one day, school one day
 It followed her to school one day
 Which was against the rules"""
 
+
+
+def shots_in_launch(launch: dict[any]) -> int:
+    total_shots = 0
+    # launch = match['t_shots'][0]
+    shot_type = ['high_made', 'high_missed', 'low_made', 'low_missed']
+    for shot in shot_type:
+        total_shots = launch[shot] + total_shots
+    return total_shots
+
+
+
 if __name__ == '__main__':
     print('starting parse')
     # string.replace(old, new, count)
@@ -65,3 +77,14 @@ if __name__ == '__main__':
         smatch = smatch.replace(key, value)
     match = json.loads(smatch)
     pprint(match)
+
+# def launches_in_match(potato):
+#     launches = []
+#     for launch in match['a_shots']:
+#         launches.append(shots_in_launch(launch))
+#     print(launches)
+def launches_in_match(launches):
+    return [shots_in_launch(launch) for launch in launches]
+
+# adds both list of shots in the match
+print(sum(launches_in_match(match['a_shots']) + launches_in_match(match['t_shots'])))

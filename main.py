@@ -2,6 +2,9 @@ import json
 from pprint import pprint
 
 
+
+
+
 mary = """Do, do do do, do do do, do do do, do do do do do
 Do, do do do, do do do, do do do, do do do do do
 Mary had a little lamb
@@ -83,8 +86,22 @@ if __name__ == '__main__':
 #     for launch in match['a_shots']:
 #         launches.append(shots_in_launch(launch))
 #     print(launches)
-def launches_in_match(launches):
-    return [shots_in_launch(launch) for launch in launches]
+    def shots_in_match(launches):
+        return sum([shots_in_launch(launch) for launch in launches])
+
+    def shots_made(launches): #returns the total high made
+        # print(launch['high_made'])
+        return sum([launch['high_made'] for launch in launches])
 
 # adds both list of shots in the match
-print(sum(launches_in_match(match['a_shots']) + launches_in_match(match['t_shots'])))
+    # print(sum(launches_in_match(match['t_shots'])))
+    data = ['total_shots', 'shot_high', 'taxi', 'climb']
+
+
+    def match_data(_match) -> dict:
+        return {
+            'total_shots': shots_in_match(_match['t_shots']),
+            'shot_high': shots_made(_match['t_shots']),
+            'taxi': _match['taxi'],
+            'climb': _match['climb']
+        }

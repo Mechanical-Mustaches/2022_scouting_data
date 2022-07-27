@@ -1,26 +1,6 @@
 import json
 from pprint import pprint
-
-
-
-
-
-mary = """Do, do do do, do do do, do do do, do do do do do
-Do, do do do, do do do, do do do, do do do do do
-Mary had a little lamb
-Little lamb, little lamb
-Mary had a little lamb
-It's fleece was white as snow
-Everywhere that Mary went
-Mary went, Mary went
-Everywhere that Mary went
-The lamb was sure to go
-It followed her to school one day
-School one day, school one day
-It followed her to school one day
-Which was against the rules"""
-
-
+import os
 
 def shots_in_launch(launch: dict[any]) -> int:
     total_shots = 0
@@ -30,23 +10,11 @@ def shots_in_launch(launch: dict[any]) -> int:
         total_shots = launch[shot] + total_shots
     return total_shots
 
-
-
-if __name__ == '__main__':
-    print('starting parse')
-    # string.replace(old, new, count)
-    replace = {'do': 'turtle',
-               'Do':'sea',
-               'lamb':'fish',
-               'fleece':'scales'}
-    for key, value in replace.items():
-        mary = mary.replace(key, value)
-
-    pprint(mary)
-    with open('match-2022ilch-45-8122.json', 'r') as f:
+def load_match(file: str) -> dict:
+    with open(file, 'r') as f:
         smatch = f.read()
 
-    print(smatch)
+    # print(smatch)
     replace = {
         'meta_scouter_id': 'scouter',
         'meta_scout_time': 'time',
@@ -79,29 +47,50 @@ if __name__ == '__main__':
     for key, value in replace.items():
         smatch = smatch.replace(key, value)
     match = json.loads(smatch)
-    pprint(match)
+    return match
 
-# def launches_in_match(potato):
-#     launches = []
-#     for launch in match['a_shots']:
-#         launches.append(shots_in_launch(launch))
-#     print(launches)
-    def shots_in_match(launches):
-        return sum([shots_in_launch(launch) for launch in launches])
+def shots_in_match(launches):
+    return sum([shots_in_launch(launch) for launch in launches])
 
-    def shots_made(launches): #returns the total high made
-        # print(launch['high_made'])
-        return sum([launch['high_made'] for launch in launches])
+def shots_made(launches): #returns the total high made
+    # print(launch['high_made'])
+    return sum([launch['high_made'] for launch in launches])
 
-# adds both list of shots in the match
-    # print(sum(launches_in_match(match['t_shots'])))
-    data = ['total_shots', 'shot_high', 'taxi', 'climb']
+def match_data(_match) -> dict:
+    return {
+        'total_shots': shots_in_match(_match['t_shots']),
+        'shot_high': shots_made(_match['t_shots']),
+        'taxi': _match['taxi'],
+        'climb': _match['climb'],
+        'team': _match['team']
+    }
+
+def load_folder(folder):
+    all_match_files = os.listdir(folder)
+    all_matches = []
+
+    for each_match_file in all_match_files:
+        match = load_match(folder + '\\' + each_match_file)
+        all_matches.append(match_data(match))
+
+    return all_matches
+if __name__ == '__main__':
+    print('starting parse')
+
+    all_match_files = os.listdir('CIL_matches')
+    matches = load_folder('CIL_matches')
 
 
-    def match_data(_match) -> dict:
-        return {
-            'total_shots': shots_in_match(_match['t_shots']),
-            'shot_high': shots_made(_match['t_shots']),
-            'taxi': _match['taxi'],
-            'climb': _match['climb']
-        }
+    pprint(matches)
+    total = 0
+    total_made = 0
+    for each_match in matches:
+        if each_match['team'] == 8122:
+            total = total + each_match['total_shots']
+            total_made = total_made + each_match['shot_high']
+    print(total_made/total)
+
+#which team had most total shots?
+#which team highest shooting percentage?
+#which team highest taxi percentage?
+m = {'team': {'total_shots': 0, 'shooting_percent': 0, 'taxi_percent': 0}}

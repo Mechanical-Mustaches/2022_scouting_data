@@ -2,6 +2,8 @@ import json
 from pprint import pprint
 import os
 
+print('Congrats line 5 ran')
+
 def shots_in_launch(launch: dict[any]) -> int:
     total_shots = 0
     # launch = match['t_shots'][0]
@@ -74,6 +76,19 @@ def load_folder(folder):
         all_matches.append(match_data(match))
 
     return all_matches
+
+def shot_percentage(team: int) -> float:
+    total = 0
+    total_made = 0
+    for each_match in matches:
+        if each_match['team'] == team:
+            total = total + each_match['total_shots']
+            total_made = total_made + each_match['shot_high']
+    return total_made/total
+
+
+print('__name__ is ', __name__) 
+
 if __name__ == '__main__':
     print('starting parse')
 
@@ -82,13 +97,6 @@ if __name__ == '__main__':
 
 
     pprint(matches)
-    total = 0
-    total_made = 0
-    for each_match in matches:
-        if each_match['team'] == 8122:
-            total = total + each_match['total_shots']
-            total_made = total_made + each_match['shot_high']
-    print(total_made/total)
 
 #which team had most total shots?
 #which team highest shooting percentage?

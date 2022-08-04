@@ -70,10 +70,12 @@ def match_data(_match) -> dict:
 def load_folder(folder):
     all_match_files = os.listdir(folder)
     all_matches = []
-
+    
     for each_match_file in all_match_files:
-        match = load_match(folder + '\\' + each_match_file)
-        all_matches.append(match_data(match))
+        if each_match_file[:5] == 'match':
+            print(each_match_file)
+            match = load_match(folder + '\\' + each_match_file)
+            all_matches.append(match_data(match))
 
     return all_matches
 
@@ -93,7 +95,7 @@ if __name__ == '__main__':
     print('starting parse')
 
     all_match_files = os.listdir('CIL_matches')
-    matches = load_folder('CIL_matches')
+    matches = load_folder('Midwest Regional')
 
 
     pprint(matches)

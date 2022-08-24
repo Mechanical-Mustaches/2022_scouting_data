@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 import os
+from typing import Tuple, Any
 
 print('Congrats line 5 ran')
 
@@ -67,40 +68,59 @@ def match_data(_match) -> dict:
         'team': _match['team']
     }
 
-def load_folder(folder):
-    all_match_files = os.listdir(folder)
-    all_matches = []
-    
-    for each_match_file in all_match_files:
-        if each_match_file[:5] == 'match':
-            print(each_match_file)
-            match = load_match(folder + '\\' + each_match_file)
-            all_matches.append(match_data(match))
 
-    return all_matches
 
-def shot_percentage(team: int) -> float:
+
+
+def shot_percentage(team: int, matches):
     total = 0
     total_made = 0
     for each_match in matches:
         if each_match['team'] == team:
             total = total + each_match['total_shots']
             total_made = total_made + each_match['shot_high']
-    return total_made/total
+    return total_made/total, total, total_made
 
 
-print('__name__ is ', __name__) 
+print('__name__ is ', __name__)
+
+
+def load_folder(folder):
+    all_match_files = os.listdir(folder)
+    matches = []
+
+    for each_match_file in all_match_files:
+        if each_match_file[:5] == 'match':
+
+            match = load_match(folder + '\\' + each_match_file)
+            matches.append(match_data(match))
+
+    #begin regional creation
+    team_list = {match['team'] for match in matches}
+    regional = {team: {} for team in team_list}
+    regional = new_func(regional, matches)
+    return matches, regional
+
+
+def new_func(regional, matches):
+    for team in regional:
+        percent, total, made = shot_percentage(team, matches)
+        regional[team]['shot_percentage'] = percent
+        regional[team]['total'] = total
+        regional[team]['total_made'] = made
+    return regional
+
 
 if __name__ == '__main__':
     print('starting parse')
 
-    all_match_files = os.listdir('CIL_matches')
-    matches = load_folder('Midwest Regional')
+    matches, regional = load_folder('Midwest Regional')
 
-
-    pprint(matches)
+    pprint(regional)
+    # pprint(matches)
 
 #which team had most total shots?
 #which team highest shooting percentage?
 #which team highest taxi percentage?
-m = {'team': {'total_shots': 0, 'shooting_percent': 0, 'taxi_percent': 0}}
+    # m = {'team': {'total_shots': 0, 'shooting_percent': 0, 'total_made': 0, 'shots': [0,1,2,3], 'taxi_percent': 0, 'climb': 'max_climb', 'climb_accuracy': 0, 'climbs': [1,2,3]}}
+    # m[8122]['climb']

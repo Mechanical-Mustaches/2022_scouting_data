@@ -2,6 +2,7 @@ import json
 from pprint import pprint
 import os
 from typing import Tuple, Any
+import statistics
 
 print('Congrats line 5 ran')
 
@@ -99,9 +100,9 @@ def new_func(regional, matches):
     return regional
 
 
-def fill_buckets(regional):
+def fill_buckets():
     global matches
-    # global regional
+    global regional
 
     for match in matches:
         team = regional[match['team']]
@@ -110,7 +111,10 @@ def fill_buckets(regional):
         team['shots_high'].append(match['shot_high'])
         team['taxis'].append(match['taxi'])
 
-
+    for team in regional.values():
+        team['shots_in_regional'] = sum(team['shots_high'])
+        team['shot_percentage'] = round(team['shots_in_regional'] / sum(team['total_shots']), 2)
+        team['climb_average'] = statistics.mean(team['climbs'])
     return regional
 
 def load_folder(folder):
@@ -128,7 +132,7 @@ def load_folder(folder):
 
     regional = {team: {'shots_high': [], 'total_shots': [], 'climbs': [], 'taxis': []} for team in team_list}
     # regional = new_func(regional, matches)
-    regional = fill_buckets(regional)
+    fill_buckets()
     return matches, regional
 
 

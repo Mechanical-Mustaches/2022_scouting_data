@@ -9,6 +9,35 @@ print('Congrats line 5 ran')
 matches = []
 regional = {}
 
+class Team:
+    def __init__(self):
+        self.climbs = []
+        self.shots_high = []
+        self.taxis = []
+        self.total_shots = []
+
+    @property
+    def shots_in_regional(self):
+        return sum(self.shots_high)
+
+    @property
+    def shot_percentage(self):
+        return round(self.shots_in_regional / sum(self.total_shots), 2)
+
+    @property
+    def climb_average(self):
+        return statistics.mean(self.climbs)
+
+    def fill_buckets(self, match: dict):
+        # team = regional[match['team']]
+        self.total_shots.append(match['total_shots'])
+        self.climbs.append(match['climb'])
+        self.shots_high.append(match['shot_high'])
+        self.taxis.append(match['taxi'])
+
+
+
+
 def shots_in_launch(launch: dict[any]) -> int:
     total_shots = 0
     # launch = match['t_shots'][0]
@@ -91,32 +120,6 @@ print('__name__ is ', __name__)
 
 
 
-def new_func(regional, matches):
-    for team in regional:
-        percent, total, made = shot_percentage(team, matches)
-        regional[team]['shot_percentage'] = percent
-        regional[team]['total'] = total
-        regional[team]['total_made'] = made
-    return regional
-
-
-def fill_buckets():
-    global matches
-    global regional
-
-    for match in matches:
-        team = regional[match['team']]
-        team['total_shots'].append(match['total_shots'])
-        team['climbs'].append(match['climb'])
-        team['shots_high'].append(match['shot_high'])
-        team['taxis'].append(match['taxi'])
-
-    for team in regional.values():
-        team['shots_in_regional'] = sum(team['shots_high'])
-        team['shot_percentage'] = round(team['shots_in_regional'] / sum(team['total_shots']), 2)
-        team['climb_average'] = statistics.mean(team['climbs'])
-    return regional
-
 def load_folder(folder):
     global matches
     global regional
@@ -130,12 +133,27 @@ def load_folder(folder):
     #begin regional creation
     team_list = {match['team'] for match in matches}
 
-    regional = {team: {'shots_high': [], 'total_shots': [], 'climbs': [], 'taxis': []} for team in team_list}
+    regional = {team: Team() for team in team_list}
     # regional = new_func(regional, matches)
-    fill_buckets()
+    for match in matches:
+        # team = regional[match['team']]
+        # team.fill_buckets()
+        regional[match['team']].fill_buckets(match)
     return matches, regional
 
+# def fill_buckets():
+#     global matches
+#     global regional
+#
+#     for match in matches:
+#
+#         team.total_shots.append(match['total_shots'])
+#         team.climbs.append(match['climb'])
+#         team.shots_high.append(match['shot_high'])
+#         team.taxis.append(match['taxi'])
 
+
+    # return regional
 
 if __name__ == '__main__':
     print('starting parse')
